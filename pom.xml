@@ -36,11 +36,11 @@
             <artifactId>org.wso2.carbon.identity.application.mgt.stub</artifactId>
             <version>5.12.153</version>
         </dependency>
-        <dependency>
+      <!--  <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>3.8.1</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
@@ -69,86 +69,43 @@
 
     <build>
         <plugins>
-            <!--<plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>xjc</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <packageName>com.x.y.model</packageName>
-                    <wsdl>true</wsdl>
-                    <xmlschema>false</xmlschema>
-                    <schemaDirectory>src/main/resources</schemaDirectory>
-                    <generateDirectory>src/main/java</generateDirectory>
-                    <schemaFiles>AuthenticationAdmin.wsdl, IdentityProviderMgtService.wsdl</schemaFiles>
-
-                </configuration>
-            </plugin>
-  -->
-            <!-- mvn clean jaxb2:xjc -->
-         <!--   <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>1.5</version>
-                <executions>
-                    <execution>
-                        <id>xjc</id>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <packageName>org.wso2.sample.stub</packageName>
-                    <outputDirectory>src/main/java</outputDirectory>
-                    <wsdl>true</wsdl>
-                    <xmlschema>false</xmlschema>
-                    <schemaDirectory>src/main/resources</schemaDirectory>
-                    <schemaFiles>AuthenticationAdmin.wsdl, IdentityProviderMgtService.wsdl</schemaFiles>
-                    <clearOutputDir>false</clearOutputDir>
-                </configuration>
-            </plugin>-->
-
-            <plugin>
-                <groupId>org.apache.cxf</groupId>
-                <artifactId>cxf-codegen-plugin</artifactId>
-                <version>${cxf.version}</version>
-                <executions>
-                    <execution>
-                        <id>generate-sources</id>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <sourceRoot>${basedir}/src/main/java/org/wso2/sample/wsdl</sourceRoot>
-                            <wsdlOptions>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/AuthenticationAdmin.wsdl</wsdl>
-                                </wsdlOption>
-                                <wsdlOption>
-                                    <wsdl>${basedir}/src/main/resources/IdentityProviderMgtService.wsdl</wsdl>
-                                </wsdlOption>
-                            </wsdlOptions>
-                        </configuration>
-                        <goals>
-                            <goal>wsdl2java</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.wso2.sample.IdentityServicesMigrationTool</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <finalName>is_migration_tool</finalName>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <!--  this is used for inheritance merges  -->
+                        <phase>package</phase>
+                        <!--  bind to the packaging phase  -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 

@@ -1,5 +1,6 @@
 package org.wso2.sample.internal;
 
+import java.io.File;
 import java.util.Scanner;
 
 public class Utils {
@@ -25,5 +26,11 @@ public class Utils {
             }
 
         }
+    }
+
+    public static String getFormattedFilePath(String filePath){
+        return String.format("%s%s", filePath,
+                filePath.endsWith(File.separator) ?
+                        "" : File.separator);
     }
 }

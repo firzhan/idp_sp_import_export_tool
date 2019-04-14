@@ -1,8 +1,6 @@
 package org.wso2.sample.adminservices;
 
 import org.apache.axis2.AxisFault;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.wso2.carbon.identity.application.common.model.xsd.ApplicationBasicInfo;
 import org.wso2.carbon.identity.application.common.model.xsd.ImportResponse;
 import org.wso2.carbon.identity.application.common.model.xsd.SpFileContent;
@@ -10,9 +8,12 @@ import org.wso2.carbon.identity.application.mgt.stub.IdentityApplicationManageme
 import org.wso2.carbon.identity.application.mgt.stub.IdentityApplicationManagementServiceStub;
 import org.wso2.sample.constant.ServiceClientConstant;
 import org.wso2.sample.exception.AdminServicesClientException;
+import org.wso2.sample.internal.Utils;
+import org.wso2.sample.model.DataHolder;
 
-import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -21,81 +22,113 @@ import java.util.stream.Stream;
 
 public class IdentityApplicationMgtAdminServiceClient extends AdminServiceClient {
 
-    public IdentityApplicationMgtAdminServiceClient(String serviceUrl, String cookie) throws AdminServicesClientException {
+    public IdentityApplicationMgtAdminServiceClient(DataHolder dataHolder,
+                                                    String cookie) throws AdminServicesClientException {
 
+        super(dataHolder);
         try {
-            this.stub = new IdentityApplicationManagementServiceStub(serviceUrl);
+            this.stub =
+                    new IdentityApplicationManagementServiceStub(String.format(ServiceClientConstant.SERVICE_URL_FORMAT, dataHolder.getHostName(), dataHolder.getPort(), ServiceClientConstant.APP_MGT_SERVICE_NAME));
         } catch (AxisFault axisFault) {
-            throw new AdminServicesClientException("Axis2 soap fault occurred in Identity Application Mgt Service Stub",
-                    axisFault);
+            throw new AdminServicesClientException("Axis2 soap fault occurred" +
+                    " in Identity Application Mgt Service Stub", axisFault);
         }
 
-        init(cookie, false);
+        init(cookie);
     }
 
-    public void exportAllSPs() throws AdminServicesClientException  {
+    public void fetchSPs() /*throws AdminServicesClientException */{
+
+        String filePath =
+                Utils.getFormattedFilePath(dataHolder.getSpFolderLocation());
 
         try {
-            ApplicationBasicInfo[] applicationBasicInfos = ((IdentityApplicationManagementServiceStub) this.stub).
+            ApplicationBasicInfo[] applicationBasicInfos =
+                    ((IdentityApplicationManagementServiceStub) this.stub).
                     getAllApplicationBasicInfo();
 
-            for(ApplicationBasicInfo applicationBasicInfo : applicationBasicInfos){
+            if (applicationBasicInfos != null) {
 
-                System.out.println(applicationBasicInfo.getApplicationName());
+                for (ApplicationBasicInfo applicationBasicInfo :
+                        applicationBasicInfos) {
 
-                String output = ((IdentityApplicationManagementServiceStub) this.stub).exportApplication(applicationBasicInfo.getApplicationName(), true);
-                System.out.println(output);
+                    String output =
+                            ((IdentityApplicationManagementServiceStub) this.stub).
+                            exportApplication(applicationBasicInfo.getApplicationName(), true);
+                    try (Writer fileWriter =
+                                 new FileWriter(filePath + applicationBasicInfo.getApplicationName() + ".xml")) {
+                        fileWriter.write(output);
+                        successLists.add(applicationBasicInfo.getApplicationName());
+                    } catch (IOException e1) {
+                        failedLists.add(applicationBasicInfo.getApplicationName());
+                        System.err.println(String.format("Failed to write " +
+                                "the" + " SP configuration %s into a file",
+                                applicationBasicInfo.getApplicationName()));
+                        System.err.println(e1.getMessage());
+                    }
+                }
             }
-        } catch (RemoteException |  IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
-            throw new AdminServicesClientException("IDPs importing operation failed",  e);
+        } catch (RemoteException | IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
+            printStatus(ServiceClientConstant.FETCH_KEYWORD,
+                    ServiceClientConstant.SP_TYPE);
+          /*  throw new AdminServicesClientException("SPs pushing operation " +
+                    "failed", e);*/
         }
+
+        printStatus(ServiceClientConstant.FETCH_KEYWORD,
+                ServiceClientConstant.SP_TYPE);
     }
 
-    public void importAllSPs() throws AdminServicesClientException  {
+    public void pushAllSPs() /*throws AdminServicesClientException */{
 
-        String filePath = ServiceClientConstant.IDP_SOURCE_DIRECTORY_NAME + File.separator;
+        String filePath =
+                Utils.getFormattedFilePath(dataHolder.getSpFolderLocation());
+
         try (Stream<Path> paths = Files.walk(Paths.get(filePath))) {
             paths.filter(Files::isRegularFile).filter(path -> path.toString().endsWith(".xml")).
-                    forEach((path) ->{
-                String fileName = path.getFileName().toString().
-                        replaceFirst("[.][^.]+$", "");
+                    forEach((path) -> {
+                        String fileName = path.getFileName().toString().
+                                replaceFirst("[.][^.]+$", "");
 
-                try {
-                    String content = new String(Files.readAllBytes(path));
+                        try {
+                            String content =
+                                    new String(Files.readAllBytes(path));
 
-                    SpFileContent spFileContent = new SpFileContent();
-                    spFileContent.setContent(content);
-                    spFileContent.setFileName(fileName);
-                    ImportResponse importResponse = ((IdentityApplicationManagementServiceStub) this.stub).importApplication(spFileContent);
-                        System.out.println("Application name : " + importResponse.getApplicationName() + " Status : " + importResponse.getResponseCode());
+                            SpFileContent spFileContent = new SpFileContent();
+                            spFileContent.setContent(content);
+                            spFileContent.setFileName(fileName);
+                            ImportResponse importResponse =
+                                    ((IdentityApplicationManagementServiceStub) this.stub).
+                                    importApplication(spFileContent);
 
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
-                    e.printStackTrace();
-                }
-                /*String fileName = path.getFileName().toString().
-                         replaceFirst("[.][^.]+$", "");
-                System.out.println(fileName);*/
-              /*  ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                IdentityProvider identityProvider = null;
-                try {
-                    identityProvider = mapper.readValue(path.toFile(), IdentityProvider.class);
-                    ((IdentityProviderMgtServiceStub) this.stub).addIdP(identityProvider);
-                }  catch (IOException e) {
-                    System.err.println("Reading the file failed for " + path.getFileName());
-                    e.printStackTrace();
-                }catch (IdentityProviderMgtServiceIdentityProviderManagementExceptionException e) {
-                    System.err.println("Error has thrown from the stub of " + identityProvider.getIdentityProviderName()
-                    );
-                    e.printStackTrace();
-                }*/
-            });
+                            if (importResponse.getResponseCode() == ServiceClientConstant.CREATED_STATUS) {
+                                successLists.add(importResponse.getApplicationName());
+                            } else {
+                                failedLists.add(importResponse.getApplicationName());
+                                System.err.println(String.format("Failed to " +
+                                        "publish " + "the SP %s " +
+                                        "configuration",
+                                        importResponse.getApplicationName()));
+                            }
+
+                        } catch (IOException | IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
+                            System.out.println(e.getMessage());
+                            System.err.println(String.format("Failed to read "
+                                    + "the SP configuration file %s",
+                                    fileName));
+                            failedLists.add(fileName);
+                        }
+                    });
         } catch (IOException e) {
-            System.err.println("Directory Reading Operation Failed");
-            e.printStackTrace();
+            /*printStatus(ServiceClientConstant.PUBLISH_KEYWORD,
+                    ServiceClientConstant.SP_TYPE);
+*/           /* throw new AdminServicesClientException("Directory Reading " +
+                    "Operation Failed", e);*/
+
         }
+
+        printStatus(ServiceClientConstant.PUBLISH_KEYWORD,
+                ServiceClientConstant.SP_TYPE);
     }
 
 }

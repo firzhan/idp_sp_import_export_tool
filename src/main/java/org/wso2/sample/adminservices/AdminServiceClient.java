@@ -9,17 +9,21 @@ import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.wso2.sample.constant.ServiceClientConstant;
 import org.wso2.sample.model.DataHolder;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-public abstract class AdminServiceClient {
+abstract class AdminServiceClient {
 
     Stub stub;
     private String serviceUrl;
     DataHolder dataHolder;
+    List<String> successLists = new ArrayList<>();
+    List<String> failedLists = new ArrayList<>();
 
-    public AdminServiceClient( DataHolder dataHolder) {
+    AdminServiceClient(DataHolder dataHolder) {
         this.dataHolder = dataHolder;
     }
 
@@ -88,6 +92,30 @@ public abstract class AdminServiceClient {
 
     }
 
+    void printStatus(String operation, String type) {
+
+        System.out.println("*********************************************");
+
+        if(!successLists.isEmpty()){
+
+            System.out.println(String.format(ServiceClientConstant.SUCCESS_MESSAGE_STRING, operation, type, this.successLists.size()));
+
+            for (String obj : successLists) {
+                System.out.println(obj);
+            }
+        }
+
+        if(!failedLists.isEmpty()){
+
+            System.out.println(String.format(ServiceClientConstant.FAILED_MESSAGE_STRING, operation, type, this.failedLists.size()));
+            for (String obj : failedLists) {
+                System.out.println(obj);
+            }
+        }
+
+        successLists.clear();
+        failedLists.clear();
+    }
 
 
 

@@ -31,7 +31,10 @@ public class ServiceClientConstant {
     public static final String KM_KEYSTORE_PATH_PROPERTY_STRING = "km.keystore.path";
     public static final String KM_KEYSTORE_PASSWORD_PROPERTY_STRING = "km.keystore.password";
 
-    public static final String IDP_SOURCE_DIRECTORY_NAME = "idp";
+    public static final int CREATED_STATUS = 201;
+
+    public static final String IDP_TYPE = "IDPs";
+    public static final String SP_TYPE = "SPs";
 
     public static final String AUTHENTICATION_SERVICE_NAME = "AuthenticationAdmin";
     public static final String IDP_MGT_SERVICE_NAME = "IdentityProviderMgtService";
@@ -42,33 +45,25 @@ public class ServiceClientConstant {
     public static final String PASSWORDS_PROPERTY_STRING = "km.passwords";
 
     public static String OPTIONS_INFORMATION_PARA_STRING = "Please choose a number to continue....\n";
-    public static String OPTIONS_1_PARA_STRING = "1 - IDP/SP Import/Export\n2 - Users/Roles creation    \n";
-    public static String OPTIONS_2_PARA_STRING = "1 - IDP/SP Export\n2 - IDP/SP Import    \n";
+    public static String OPTIONS_1_PARA_STRING = "1 - IDP/SP Fetch/Push\n2 -" +
+            " Users/Roles creation    \n";
+    public static String OPTIONS_2_PARA_STRING = "1 - IDP/SP Fetch\n2 - " +
+            "IDP/SP" +
+            " Push    \n";
     public static String EXIT_STRING = "X - Exit The Game    ";
 
     public static String INPUT_SELECTION_REGEX = "[12]{1}";
 
     public static final String KEY_STORE_TYPE = "jks";
 
-    // public static final String KEY_STORE_PATH = "/Users/firzhan/WSO2/engagements/XANDR/deployment/zone1/wso2is-km-5.7.0/repository/resources/security/client-truststore.jks";
-   // public static final String KEY_STORE_PASSWORD = "wso2carbon";
-   //
+    public static final String SUCCESS_MESSAGE_STRING = "Successfully " +
+            "%s %s count : %d";
 
-    //String path = "./" + ACTIVEMQ_CLIENT_PROPERTIES_FILE_NAME;
+    public static final String FAILED_MESSAGE_STRING = "Failed to " +
+            "%s %s count : %d";
 
-    /**
-     * =localhost
-     * km.port=9443
-     * km.admin.username=admin
-     * km.admin.password=admin
-     * km.idp.directory.location=/Users/firzhan/CODE_REPO/idp_sp_import_export_tool/idp
-     * km.sp.directory.location=/Users/firzhan/CODE_REPO/idp_sp_import_export_tool/sp
-     * <p>
-     * km.keystore.enabled=false
-     * km.keystore.path=/Users/firzhan/WSO2/engagements/XANDR/deployment/zone1/wso2is-km-5.7.0/repository/resources/security/client-truststore.jks
-     * km.keystore.password=wso2carbon
-     */
-
+    public static final String PUBLISH_KEYWORD = "Published";
+    public static final String FETCH_KEYWORD = "Fetched";
     private ServiceClientConstant() {
 
     }

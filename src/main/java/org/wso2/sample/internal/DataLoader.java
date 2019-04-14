@@ -31,8 +31,11 @@ public class DataLoader {
             dataHolder.setIdpFolderLocation(properties.getProperty(ServiceClientConstant.IDP_STORAGE_DIRECTORY_PROPERTY_STRING));
             dataHolder.setSpFolderLocation(properties.getProperty(ServiceClientConstant.SP_STORAGE_DIRECTORY_PROPERTY_STRING));
             dataHolder.setKeyStoreEnabled(Boolean.valueOf(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_ENABLED_PROPERTY_STRING)));
-            dataHolder.setKeyStorePath(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_PATH_PROPERTY_STRING));
-            dataHolder.setKeyStorePassword(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_PASSWORD_PROPERTY_STRING).toCharArray());
+
+            if(dataHolder.isKeyStoreEnabled()){
+                dataHolder.setKeyStorePath(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_PATH_PROPERTY_STRING));
+                dataHolder.setKeyStorePassword(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_PASSWORD_PROPERTY_STRING).toCharArray());
+            }
 
             String roleName = properties.getProperty(ServiceClientConstant.ROLES_PROPERTY_STRING);
 

@@ -68,64 +68,25 @@ public class IdentityServicesMigrationTool {
 
                 IdentityProviderAdminServiceClient identityProviderAdminServiceClient = new
                         IdentityProviderAdminServiceClient(tool.getDataHolder(), adminCookie);
+                IdentityApplicationMgtAdminServiceClient identityApplicationMgtAdminServiceClient = new
+                        IdentityApplicationMgtAdminServiceClient(tool.getDataHolder(), adminCookie);
 
                 if (userSelection == 1) {
-                    //Export
+                    //Fetch
+                    identityProviderAdminServiceClient.fetchIDPs();
+                    identityApplicationMgtAdminServiceClient.fetchSPs();
+
                 } else {
-                    //Import
+                    //Push
+                    identityProviderAdminServiceClient.pushIDPs();
+                    identityApplicationMgtAdminServiceClient.pushAllSPs();
                 }
-            }
+            } // 2
 
         } catch (MisConfigurationException | AdminServicesInvocationFailed | AdminServicesClientException e) {
 
             System.err.println(e.getMessage());
             System.err.println("Exiting the program");
-        }
-
-
-
-        if (operationType == 1) {
-
-            operationType =
-                    Utils.readInput(ServiceClientConstant.OPTIONS_2_PARA_STRING, ServiceClientConstant.INPUT_SELECTION_REGEX);
-
-            IdentityProviderAdminServiceClient identityProviderAdminServiceClient = new IdentityProviderAdminServiceClient(String.format(ServiceClientConstant.SERVICE_URL_FORMAT, tool.getDataHolder().getHostName(), tool.getDataHolder().getPort(), ServiceClientConstant.IDP_MGT_SERVICE_NAME), adminCookie);
-
-            if (operationType == 1) {
-                //Export
-            } else {
-                //Import
-            }
-        }
-
-        String authenticationAdminServiceURL =
-                ServiceClientConstant.SERVICE_URL + ServiceClientConstant.AUTHENTICATION_SERVICE_NAME;
-        String idpMgtServiceURL =
-                ServiceClientConstant.SERVICE_URL + ServiceClientConstant.IDP_MGT_SERVICE_NAME;
-        String identityAppMgtServiceURL =
-                ServiceClientConstant.SERVICE_URL + ServiceClientConstant.APP_MGT_SERVICE_NAME;
-
-        // setting the system properties for javax.net.ssl
-        //AuthenticationAdminServiceClient.setSystemProperties
-        // (ServiceClientConstant.CLIENT_TRUST_STORE_PATH,
-        //       ServiceClientConstant.KEY_STORE_TYPE, ServiceClientConstant
-        //       .KEY_STORE_PASSWORD);
-
-        if (adminCookie != null) {
-            IdentityProviderAdminServiceClient identityProviderAdminServiceClient = new IdentityProviderAdminServiceClient(idpMgtServiceURL, adminCookie);
-
-            /*if(Integer.valueOf(args[0]) == 1){
-                identityProviderAdminServiceClient.importAllIDPs();
-            } else {
-
-            }*/
-
-            //identityProviderAdminServiceClient.importAllIDPs();
-            //identityProviderAdminServiceClient.exportAllIDPs();
-
-            IdentityApplicationMgtAdminServiceClient identityApplicationMgtAdminServiceClient = new IdentityApplicationMgtAdminServiceClient(identityAppMgtServiceURL, adminCookie);
-            //identityApplicationMgtAdminServiceClient.exportAllSPs();
-            identityApplicationMgtAdminServiceClient.importAllSPs();
         }
     }
 
