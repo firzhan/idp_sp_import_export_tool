@@ -64,6 +64,8 @@ public class ServiceClientConstant {
 
     public static final String PUBLISH_KEYWORD = "Published";
     public static final String FETCH_KEYWORD = "Fetched";
+
+
     private ServiceClientConstant() {
 
     }
