@@ -63,9 +63,11 @@ public class DataLoader {
             }
 
         } catch (IOException e){
-            System.err.println("Exception occured while trying to close the already read  property file : " +
+            String message = String.format("Exception occured while trying to" +
+                    " close the already read  property file : %s",
                     ServiceClientConstant.PROPERTIES_FILE_NAME);
-            throw new MisConfigurationException(e);
+
+            throw new MisConfigurationException(message, e);
         }
 
         return dataHolder;

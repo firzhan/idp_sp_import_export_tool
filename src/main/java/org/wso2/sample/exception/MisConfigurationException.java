@@ -8,7 +8,7 @@ public class MisConfigurationException extends Exception  {
         super(message);
     }
 
-    public MisConfigurationException( Exception ex) {
+    public MisConfigurationException( String message, Exception ex) {
         super(ex);
     }
 }

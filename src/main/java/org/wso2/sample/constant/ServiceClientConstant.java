@@ -44,7 +44,7 @@ public class ServiceClientConstant {
     public static final String USERNAMES_PROPERTY_STRING = "km.usernames";
     public static final String PASSWORDS_PROPERTY_STRING = "km.passwords";
 
-    public static String OPTIONS_INFORMATION_PARA_STRING = "Please choose a number to continue....\n";
+    public static String OPTIONS_INFORMATION_PARA_STRING = "Please choose a number to continue....";
     public static String OPTIONS_1_PARA_STRING = "1 - IDP/SP Fetch/Push\n2 -" +
             " Users/Roles creation    \n";
     public static String OPTIONS_2_PARA_STRING = "1 - IDP/SP Fetch\n2 - " +

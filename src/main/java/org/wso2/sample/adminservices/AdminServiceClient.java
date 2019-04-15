@@ -6,19 +6,22 @@ import org.apache.axis2.java.security.SSLProtocolSocketFactory;
 import org.apache.axis2.transport.http.HTTPConstants;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.log4j.Logger;
 import org.wso2.sample.constant.ServiceClientConstant;
 import org.wso2.sample.model.DataHolder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 abstract class AdminServiceClient {
 
+    private static final Logger log =
+            Logger.getLogger(AdminServiceClient.class);
     Stub stub;
-    private String serviceUrl;
     DataHolder dataHolder;
     List<String> successLists = new ArrayList<>();
     List<String> failedLists = new ArrayList<>();
@@ -94,23 +97,34 @@ abstract class AdminServiceClient {
 
     void printStatus(String operation, String type) {
 
-        System.out.println("*********************************************");
+        log.info("*********************************************");
 
+        final String format = String.format("%s %s ", operation, type);
         if(!successLists.isEmpty()){
 
-            System.out.println(String.format(ServiceClientConstant.SUCCESS_MESSAGE_STRING, operation, type, this.successLists.size()));
+            System.out.println(String.format(ServiceClientConstant.SUCCESS_MESSAGE_STRING,
+                    operation, type, this.successLists.size()));
 
-            for (String obj : successLists) {
-                System.out.println(obj);
-            }
+            Consumer<List<String> >
+                    printConsumerList =
+                    list -> list.forEach(message -> log.info(format + " : " + message));
+
+            printConsumerList.accept(successLists);
+
+
         }
 
         if(!failedLists.isEmpty()){
 
-            System.out.println(String.format(ServiceClientConstant.FAILED_MESSAGE_STRING, operation, type, this.failedLists.size()));
-            for (String obj : failedLists) {
-                System.out.println(obj);
-            }
+            System.out.println(String.format(ServiceClientConstant.FAILED_MESSAGE_STRING,
+                    operation, type, this.failedLists.size()));
+
+            Consumer<List<String> >
+                    printConsumerList =
+                    list -> list.forEach(message -> log.info(format + " : " + message));
+
+            printConsumerList.accept(failedLists);
+
         }
 
         successLists.clear();

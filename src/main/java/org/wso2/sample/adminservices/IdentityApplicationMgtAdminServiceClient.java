@@ -1,6 +1,7 @@
 package org.wso2.sample.adminservices;
 
 import org.apache.axis2.AxisFault;
+import org.apache.log4j.Logger;
 import org.wso2.carbon.identity.application.common.model.xsd.ApplicationBasicInfo;
 import org.wso2.carbon.identity.application.common.model.xsd.ImportResponse;
 import org.wso2.carbon.identity.application.common.model.xsd.SpFileContent;
@@ -22,13 +23,19 @@ import java.util.stream.Stream;
 
 public class IdentityApplicationMgtAdminServiceClient extends AdminServiceClient {
 
+    private static final Logger log =
+            Logger.getLogger(IdentityApplicationMgtAdminServiceClient.class);
+
     public IdentityApplicationMgtAdminServiceClient(DataHolder dataHolder,
                                                     String cookie) throws AdminServicesClientException {
 
         super(dataHolder);
         try {
             this.stub =
-                    new IdentityApplicationManagementServiceStub(String.format(ServiceClientConstant.SERVICE_URL_FORMAT, dataHolder.getHostName(), dataHolder.getPort(), ServiceClientConstant.APP_MGT_SERVICE_NAME));
+                    new IdentityApplicationManagementServiceStub(String.
+                            format(ServiceClientConstant.SERVICE_URL_FORMAT,
+                                    dataHolder.getHostName(), dataHolder.getPort(),
+                                    ServiceClientConstant.APP_MGT_SERVICE_NAME));
         } catch (AxisFault axisFault) {
             throw new AdminServicesClientException("Axis2 soap fault occurred" +
                     " in Identity Application Mgt Service Stub", axisFault);
@@ -37,7 +44,7 @@ public class IdentityApplicationMgtAdminServiceClient extends AdminServiceClient
         init(cookie);
     }
 
-    public void fetchSPs() /*throws AdminServicesClientException */{
+    public void fetchServiceProviders() /*throws AdminServicesClientException */{
 
         String filePath =
                 Utils.getFormattedFilePath(dataHolder.getSpFolderLocation());
@@ -61,25 +68,25 @@ public class IdentityApplicationMgtAdminServiceClient extends AdminServiceClient
                         successLists.add(applicationBasicInfo.getApplicationName());
                     } catch (IOException e1) {
                         failedLists.add(applicationBasicInfo.getApplicationName());
-                        System.err.println(String.format("Failed to write " +
-                                "the" + " SP configuration %s into a file",
-                                applicationBasicInfo.getApplicationName()));
-                        System.err.println(e1.getMessage());
+                        String message = String.format("Failed to write " +
+                                        "the fetched SP configuration %s into" +
+                                        " a file",
+                                applicationBasicInfo.getApplicationName());
+                        log.error(message, e1);
                     }
                 }
             }
         } catch (RemoteException | IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
-            printStatus(ServiceClientConstant.FETCH_KEYWORD,
-                    ServiceClientConstant.SP_TYPE);
-          /*  throw new AdminServicesClientException("SPs pushing operation " +
-                    "failed", e);*/
+            log.error("The operations for fetching the service providers got " +
+                    "aborted", e);
+            printStatus(ServiceClientConstant.FETCH_KEYWORD, ServiceClientConstant.SP_TYPE);
         }
 
         printStatus(ServiceClientConstant.FETCH_KEYWORD,
                 ServiceClientConstant.SP_TYPE);
     }
 
-    public void pushAllSPs() /*throws AdminServicesClientException */{
+    public void publishServiceProviders() /*throws AdminServicesClientException */{
 
         String filePath =
                 Utils.getFormattedFilePath(dataHolder.getSpFolderLocation());
@@ -105,26 +112,24 @@ public class IdentityApplicationMgtAdminServiceClient extends AdminServiceClient
                                 successLists.add(importResponse.getApplicationName());
                             } else {
                                 failedLists.add(importResponse.getApplicationName());
-                                System.err.println(String.format("Failed to " +
-                                        "publish " + "the SP %s " +
-                                        "configuration",
-                                        importResponse.getApplicationName()));
+                                String message = String.format("Failed to " +
+                                                "publish the Service Provider" +
+                                                " %s's configuration", fileName);
+                                log.error(message);
                             }
 
                         } catch (IOException | IdentityApplicationManagementServiceIdentityApplicationManagementException e) {
-                            System.out.println(e.getMessage());
-                            System.err.println(String.format("Failed to read "
-                                    + "the SP configuration file %s",
-                                    fileName));
+                            String errorMessage = String.format(
+                                    "Publishing failed as the  " +
+                                    "the reading of the SP configuration" +
+                                    "operation from the file %s failed", fileName);
+                            log.error(errorMessage, e);
                             failedLists.add(fileName);
                         }
                     });
         } catch (IOException e) {
-            /*printStatus(ServiceClientConstant.PUBLISH_KEYWORD,
-                    ServiceClientConstant.SP_TYPE);
-*/           /* throw new AdminServicesClientException("Directory Reading " +
-                    "Operation Failed", e);*/
-
+            log.error("The Service Providers couldn't be pushed into the " +
+                    "environment", e);
         }
 
         printStatus(ServiceClientConstant.PUBLISH_KEYWORD,
