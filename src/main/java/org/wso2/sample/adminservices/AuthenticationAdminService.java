@@ -27,9 +27,9 @@ import org.wso2.sample.model.DataHolder;
 
 import java.rmi.RemoteException;
 
-public class AuthenticationAdminServiceClient extends AdminServiceClient {
+public class AuthenticationAdminService extends AdminServices {
 
-    public AuthenticationAdminServiceClient(DataHolder dataHolder) throws AdminServicesClientException {
+    public AuthenticationAdminService(DataHolder dataHolder) throws AdminServicesClientException {
 
         super(dataHolder);
         try {

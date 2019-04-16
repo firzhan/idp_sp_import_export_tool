@@ -8,7 +8,7 @@ public class AdminServicesInvocationFailed extends RuntimeException {
         super(message);
     }
 
-    public AdminServicesInvocationFailed( Exception ex) {
+    public AdminServicesInvocationFailed( String message, Exception ex) {
         super(ex);
     }
 }

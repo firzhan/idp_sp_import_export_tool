@@ -1,9 +1,11 @@
 package org.wso2.sample;
 
 import org.apache.log4j.Logger;
-import org.wso2.sample.adminservices.AuthenticationAdminServiceClient;
-import org.wso2.sample.adminservices.IdentityApplicationMgtAdminServiceClient;
-import org.wso2.sample.adminservices.IdentityProviderAdminServiceClient;
+import org.wso2.sample.adminservices.AuthenticationAdminService;
+import org.wso2.sample.adminservices.AuthorizationManagerAdminService;
+import org.wso2.sample.adminservices.IdentityApplicationMgtAdminService;
+import org.wso2.sample.adminservices.IdentityProviderAdminService;
+import org.wso2.sample.adminservices.UserStoreMgtAdminService;
 import org.wso2.sample.constant.ServiceClientConstant;
 import org.wso2.sample.exception.AdminServicesClientException;
 import org.wso2.sample.exception.AdminServicesInvocationFailed;
@@ -11,6 +13,8 @@ import org.wso2.sample.exception.MisConfigurationException;
 import org.wso2.sample.internal.DataLoader;
 import org.wso2.sample.internal.Utils;
 import org.wso2.sample.model.DataHolder;
+
+import java.util.Arrays;
 
 public class IdentityServicesMigrationTool {
 
@@ -38,8 +42,8 @@ public class IdentityServicesMigrationTool {
     private String getCookie() {
 
         try {
-            AuthenticationAdminServiceClient authenticationAdminServiceClient =
-                    new AuthenticationAdminServiceClient(dataHolder);
+            AuthenticationAdminService authenticationAdminServiceClient =
+                    new AuthenticationAdminService(dataHolder);
 
             return authenticationAdminServiceClient.login();
         } catch (AdminServicesClientException e) {
@@ -70,10 +74,8 @@ public class IdentityServicesMigrationTool {
                 userSelection =
                         Utils.readInput(ServiceClientConstant.OPTIONS_2_PARA_STRING, ServiceClientConstant.INPUT_SELECTION_REGEX);
 
-                IdentityProviderAdminServiceClient identityProviderAdminServiceClient = new
-                        IdentityProviderAdminServiceClient(tool.getDataHolder(), adminCookie);
-                IdentityApplicationMgtAdminServiceClient identityApplicationMgtAdminServiceClient = new
-                        IdentityApplicationMgtAdminServiceClient(tool.getDataHolder(), adminCookie);
+                IdentityProviderAdminService identityProviderAdminServiceClient = new IdentityProviderAdminService(tool.getDataHolder(), adminCookie);
+                IdentityApplicationMgtAdminService identityApplicationMgtAdminServiceClient = new IdentityApplicationMgtAdminService(tool.getDataHolder(), adminCookie);
 
                 if (userSelection == 1) {
                     //Fetch
@@ -87,10 +89,23 @@ public class IdentityServicesMigrationTool {
                 }
             } else { // 2
 
+                if(tool.getDataHolder().getRoleNamesArray().length > 0){
+
+                    AuthorizationManagerAdminService authorizationManagerAdminService = new
+                            AuthorizationManagerAdminService(tool.getDataHolder(), adminCookie);
+
+                    String[] permissionsArray =
+                            authorizationManagerAdminService.getPermissionOfSuperUser();
+
+                    UserStoreMgtAdminService userStoreMgtAdminService =
+                            new UserStoreMgtAdminService(tool.getDataHolder()
+                                    , adminCookie);
+                    userStoreMgtAdminService.addRoles(permissionsArray);
+                    userStoreMgtAdminService.addUsers();
+                }
             }
 
         } catch (MisConfigurationException | AdminServicesInvocationFailed | AdminServicesClientException e) {
-
             log.error("Exiting the program", e);
         }
     }

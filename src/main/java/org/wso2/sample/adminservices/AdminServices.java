@@ -17,16 +17,16 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-abstract class AdminServiceClient {
+abstract class AdminServices {
 
     private static final Logger log =
-            Logger.getLogger(AdminServiceClient.class);
+            Logger.getLogger(AdminServices.class);
     Stub stub;
     DataHolder dataHolder;
     List<String> successLists = new ArrayList<>();
     List<String> failedLists = new ArrayList<>();
 
-    AdminServiceClient(DataHolder dataHolder) {
+    AdminServices(DataHolder dataHolder) {
         this.dataHolder = dataHolder;
     }
 
@@ -102,7 +102,7 @@ abstract class AdminServiceClient {
         final String format = String.format("%s %s ", operation, type);
         if(!successLists.isEmpty()){
 
-            System.out.println(String.format(ServiceClientConstant.SUCCESS_MESSAGE_STRING,
+            log.info(String.format(ServiceClientConstant.SUCCESS_MESSAGE_STRING,
                     operation, type, this.successLists.size()));
 
             Consumer<List<String> >
@@ -116,12 +116,12 @@ abstract class AdminServiceClient {
 
         if(!failedLists.isEmpty()){
 
-            System.out.println(String.format(ServiceClientConstant.FAILED_MESSAGE_STRING,
+            log.error(String.format(ServiceClientConstant.FAILED_MESSAGE_STRING,
                     operation, type, this.failedLists.size()));
 
             Consumer<List<String> >
                     printConsumerList =
-                    list -> list.forEach(message -> log.info(format + " : " + message));
+                    list -> list.forEach(message -> log.error(format + " : " + message));
 
             printConsumerList.accept(failedLists);
 

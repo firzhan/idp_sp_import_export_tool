@@ -39,13 +39,13 @@ import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.util.stream.Stream;
 
-public class IdentityProviderAdminServiceClient extends AdminServiceClient {
+public class IdentityProviderAdminService extends AdminServices {
 
     private static final Logger log =
-            Logger.getLogger(IdentityProviderAdminServiceClient.class);
+            Logger.getLogger(IdentityProviderAdminService.class);
 
-    public IdentityProviderAdminServiceClient(DataHolder dataHolder,
-                                              String cookie) throws AdminServicesClientException {
+    public IdentityProviderAdminService(DataHolder dataHolder,
+                                        String cookie) throws AdminServicesClientException {
 
         super(dataHolder);
         try {

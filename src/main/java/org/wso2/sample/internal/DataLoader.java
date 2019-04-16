@@ -31,6 +31,7 @@ public class DataLoader {
             dataHolder.setIdpFolderLocation(properties.getProperty(ServiceClientConstant.IDP_STORAGE_DIRECTORY_PROPERTY_STRING));
             dataHolder.setSpFolderLocation(properties.getProperty(ServiceClientConstant.SP_STORAGE_DIRECTORY_PROPERTY_STRING));
             dataHolder.setKeyStoreEnabled(Boolean.valueOf(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_ENABLED_PROPERTY_STRING)));
+            dataHolder.setAdminRole(properties.getProperty(ServiceClientConstant.KM_ADMIN_ROLE_PROPERTY_STRING));
 
             if(dataHolder.isKeyStoreEnabled()){
                 dataHolder.setKeyStorePath(properties.getProperty(ServiceClientConstant.KM_KEYSTORE_PATH_PROPERTY_STRING));

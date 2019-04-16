@@ -16,10 +16,21 @@ public class DataHolder {
     private String keyStorePath;
     private char[] keyStorePassword;
 
+    private String adminRole;
+
     private Map<String, String> userMap = new HashMap<>();
 
     private String[] roleNamesArray = new String[0];
 
+    public String getAdminRole() {
+
+        return adminRole;
+    }
+
+    public void setAdminRole(String adminRole) {
+
+        this.adminRole = adminRole;
+    }
 
     public void addUser(String userName, String password){
         userMap.putIfAbsent(userName, password);

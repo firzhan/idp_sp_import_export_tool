@@ -30,15 +30,24 @@ public class ServiceClientConstant {
     public static final String KM_KEYSTORE_ENABLED_PROPERTY_STRING = "km.keystore.enabled";
     public static final String KM_KEYSTORE_PATH_PROPERTY_STRING = "km.keystore.path";
     public static final String KM_KEYSTORE_PASSWORD_PROPERTY_STRING = "km.keystore.password";
+    public static final String KM_ADMIN_ROLE_PROPERTY_STRING = "km.admin.role";
 
     public static final int CREATED_STATUS = 201;
 
     public static final String IDP_TYPE = "IDPs";
     public static final String SP_TYPE = "SPs";
+    public static final String ROLE_TYPE = "Roles";
+    public static final String USER_TYPE = "Users";
+
+
 
     public static final String AUTHENTICATION_SERVICE_NAME = "AuthenticationAdmin";
     public static final String IDP_MGT_SERVICE_NAME = "IdentityProviderMgtService";
     public static final String APP_MGT_SERVICE_NAME = "IdentityApplicationManagementService";
+    public static final String REMOTE_USERSTORE_MGT_SERVICE_NAME =
+            "RemoteUserStoreManagerService";
+    public static final String REMOTE_AUTHORIZATION_MGT_SERVICE_NAME =
+            "RemoteAuthorizationManagerService";
 
     public static final String ROLES_PROPERTY_STRING = "km.roles";
     public static final String USERNAMES_PROPERTY_STRING = "km.usernames";
@@ -62,8 +71,9 @@ public class ServiceClientConstant {
     public static final String FAILED_MESSAGE_STRING = "Failed to " +
             "%s %s count : %d";
 
-    public static final String PUBLISH_KEYWORD = "Published";
-    public static final String FETCH_KEYWORD = "Fetched";
+    public static final String PUBLISH_KEYWORD = "Operation Publishing";
+    public static final String FETCH_KEYWORD = "Operation Fetching";
+    public static final String ADDED_KEYWORD = "Operation - Addition";
 
 
     private ServiceClientConstant() {
