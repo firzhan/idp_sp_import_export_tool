@@ -8,13 +8,20 @@ Further information on Identity Providers and Service Providers can be found at 
 
 Before proceeding with building the java source, initially, we have to configure the is_migration_client.properties file.
 
+# is_migration_client.properties
+
 The proerties file consist of following configuration.
-# Hostname of the intended WSO2 Identity server. 
-# This hostname, port, username and password differs whether we are running the server to export the configurations from the # # WSO2 IS to a file system or importing it to a destination server
-km.hostname=localhost
-km.port=9443
-km.admin.username=admin
-km.admin.password=admin
+
+**km.hostname=localhost**
+
+**km.port=9443**
+
+**km.admin.username=admin**
+
+**km.admin.password=admin**
+
+Hostname of the intended WSO2 Identity server. 
+This hostname, port, username and password differs whether we are running the server to export the configurations from the # # WSO2 IS to a file system or importing it to a destination server
 
 # This direcotry location is used to store the fetched IDP and SP confogirations.
 # Afterwards, when publishing the configurations, the relevant configurations of IDP and SP can be found at the following 
