@@ -68,9 +68,8 @@ The sample  **is_migration_client.properties** file can be found over here.
 3) Eventually the jar can be moved into a seprate directory and should be placed along with the is_migration_client.properties 
    file.
    
-├── tool_directory
-│   │   ├── is_migration_tool.jar
-│   │   ├── is_migration_client.properties
- 
+4) Execute the jar with the command **java -jar is_migration_tool.jar**   
+   
+
  
  
